@@ -1,0 +1,694 @@
+<head> 
+<meta charset="utf-8"/>
+<title>Retrofit Tutorial</title>
+<link rel="stylesheet" type="text/css" href="/~stinghet/retrofit/retrofit_style.css">
+<link rel="stylesheet" href="prism.css">
+<script src = "prism.js"></script>
+</head>
+ <a name = "section1">
+<body>
+<div class="header-cont">
+<div class = "big-header">Retrofit Tutorial for Android Studio</div><br/>
+</div>
+ <div id = "page-wrap">
+ <div id = "sidebar"> 
+ <a href = "#">Introduction</a> 
+<br/><a href = "#section2">Installing Retrofit</a> 
+<br/><a href = "#section3">Retrofit and the API</a> 
+<br/><a href = "#section4">GET and POST Interface</a> 
+<br/><a href = "#section5">The RestAdapter</a> 
+<br/><a href = "#section6">POST Method</a> 
+<br/><a href = "#section7">GET Method</a> 
+<br/><a href = "#section8">A Little Bit of UI</a> 
+<br/><a href = "#section9">Sample POST to API</a> 
+<br/><a href = "#section10">Sample GET Call</a>
+<br/><a href = "#section11">Resources</a>
+
+ </div>
+ 
+ 
+ </div>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+<div class = "content">
+	<div class = "sub-header"> Introduction to Retrofit </div>
+	<div class = "text-section">
+	 This is a How To Guide for using the Retrofit library for Android.
+	 <br/> <br/>Retrofit is the Android answer to simple, easy HTTP request management. If you have done any Android app development and needed to make HTTP requests, you’ve probably created an asyncHttp object, and a custom JSON converter, but with Retrofit, those many lines of code can just disappear. Retrofit handles the creation of the async task, the retrieval of data, and even automatically translates JSON into a POJO.* (You can still access the plain JSON string if you want, though… No worries.) 
+	 <br/> <br/>This How To Guide is going to take you through the creation of a brand new Android app in Android Studio, creating the API calls to a basic API using Retrofit, and displaying the data in a very basic, no fuss way. 
+	 <br/> <br/>The reason that I’m taking this approach is so that it makes it really easy to see what Retrofit can do, and how little code it takes to do it. Often with code snippets and samples, it’s hard to see how to integrate them into a project and actually get them to run. With this tutorial, you will end up with a bare bones, functional, working app that you can build on and customize to your heart’s content! 
+	 <br/> <br/></br>Let’s get started! 
+	 <br/> 
+	 <br/>Install Android Studio and Create a New Project <a href = "http://www.javacodegeeks.com/2013/06/android-studio-getting-started-with-the-new-android-ide.html"> (try this guide from javacodegeeks.com if you need help) </a>
+	 <br/>Feel free to call your project whatever you want. I am going to call mine RetrofitHowTo. 
+	 <br/> <br/>Note: For the Java newbie like me, POJO stands for Plain Old Java Object (and it reminds me a lot of a struct in C…) 
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+	<a name = "section2">
+	 <br/><br/><br/><br/>
+	
+		<div class = "sub-header">  Installing Retrofit and GSON </div>
+	<div class = "text-section">
+   Retrofit is a library, and so before we use it we need to install it. 
+<br/> <br/>Retrofit relies on another library, GSON, for some of its behind-the-scenes capabilities, so when installing Retrofit, we need to make sure we install GSON too. 
+<br/> <br/>Android Studio utilizes Gradle, which is a very cool utility. <a href ="https://gradle.org/" >Learn more about Gradle here. </a>
+<br/> <br/>This is build.gradle ( 2 ). We need to make sure that we are editing the build.grade that is part of the project, and not in the Gradle folder. 
+<br/><br/> <img src="http://i.imgur.com/iLATu2v.png">
+<br/> <br/>Inside build.gradle ( 1 ) add the following lines to the dependencies tag. 
+<pre class="language-markup">
+<code class="language-markup"> 
+dependencies {
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.google.code.gson:gson:1.7.2'
+}
+</code>
+</pre>
+
+<br/>Note: You may want to check that these are the newest versions of GSON and Retrodfit. <a href = "gradleplease.appspot.com/">Try 
+Gradle, Please for up to date information. </a>
+<br/> <br/>Gradle needs to sync, to install the new libraries, so click the sync Gradle with project icon ( 3 ). 
+<br/> <br/>The whole point of using Retrofit is to get data from the internet. Obviously, that means that our app needs to have permission to access the internet. 
+<br/> <br/>Add this line to your manifest, AndroidManifest.xml, right above the application tag. 
+<pre class="language-markup">
+<code class="language-markup"> 
+    &lt uses-permission android:name="android.permission.INTERNET"/ &gt
+</code>
+</pre>
+
+
+<br/> <br/>That’s it! Your project is up to date, internet capable, and ready to use Retrofit! 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	 <a name = "section3">
+	 <br/><br/><br/><br/>
+	
+		<div class = "sub-header">Retrofit and the API</div>
+	<div class = "text-section">
+Now we have Retrofit installed, but we have just one more piece of set-up to do before we are ready to GET and POST some data. 
+<br/><br/>When using an API (unlike using a user interface) we have to know what we are asking for, and ask for it by name. 
+<br/><br/>One of the coolest things about Retrofit, in my opinion, is that it does so much behind the scenes. For example, we are going to make a POJO that exactly matches the wording of the JSON coming out of the API, and then (kinda like magic) Retrofit is going to convert the data into a Java object, and we won't have to do anything to make it happen. 
+<br/><br/>Our job now is to build a Java object that Retrofit will be able to use and recognize, when it gets info from the API. 
+<br/><br/>For this example I am going to use an API of my own creation, because it is extremely simple and will make demonstration easy. It doesn’t really provide us with any meaningful data, but we can GET and POST data with no authorization (so feel free to post whatever you like to the API when we move on to the POST demonstration) 
+You can access the API at <a href = "http://stinghet-wk4.appspot.com/cat"> http://stinghet-wk4.appspot.com/cat</a>
+<br/><br/><br/>Presenting the Cat List API (it’s a list of cats) 
+<br/><br/>Cat Object: 
+<ul>
+<li>id (string)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;automatically generated. We won't use it, but it comes from the API, so we need to tell Retrofit to expect it. </li>
+<li>name (string)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the cat's first name</li>
+<li>color (string)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the cat's fur color</li>
+<li>nap_spot (string)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the cat's favorite snoozing location</li>
+</ul>
+<br/><br/>In Android Studio, create a new Java class under the java folder, in the same folder as our MainActivity. 
+<br/><br/>Let’s call it Cat. 
+<br/><br/>It is going to hold the structure for creating a POJO of a Cat, as defined by the API. 
+<br/><br/><img src ="http://i.imgur.com/cbtaFct.png">
+<br/><br/>You can see on the left side where the new Java Class has been created. 
+<br/><br/>Fill in the Java class so that it matches the API data model exactly. In order for Retrofit to automatically create a POJO from a JSON object, the fields for the JSON object need to exactly match the POJO declaration. 
+<br/><br/>This is what your POJO for Cat should look like, with basic get and set functionality. 
+<pre class = "language-java">
+<code class = "language-java">
+package com.example.tracy.retrofithowto;
+
+public class Cat {
+
+    private String id;
+    private String name;
+    private String color;
+    private String nap_spot;
+
+
+    public String getCatId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName(){
+        return name;
+	}
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+
+    public String getColor(){
+        return color;
+    }
+
+    public void setColor(String color){
+        this.color = color;
+    }
+
+    public String getNapSpot(){
+        return nap_spot;
+    }
+
+    public void setNapSpot(String nap_spot){
+        this.nap_spot = nap_spot;
+    }	
+
+</code> 
+</pre>
+
+	</div>
+
+
+	
+	
+	
+	
+	
+	
+	
+
+	
+<a name = "section4">
+<br/><br/><br/><br/>
+
+<div class = "sub-header"> Create an Interface </div>
+	<div class = "text-section">
+
+In order to use Retrofit to connect to the Cat API we need to create an interface. This is just a method declaration. We will write the code for it a little later, in the MainActivity file. 
+<br/> <br/>Create a new Java Interface file in the same folder with the Cat class definition and  MainActivity. 
+<br/> <br/>Android Studio Hint: 
+Right-click on the folder, and select New to create a new blank file. Don’t see an option to create an interface? That’s okay. Select New Java Class, and in the next window you will have the option to select “Interface” as the kind of file to create. 
+<br/> <br/>In our interface, we need to declare the type of HTTP request we are going to make,  starting with GET. 
+<pre class="language-java">
+	<code class="language-java"> 
+public interface CatAPI {
+
+
+    @GET("/cat")
+    public void getCats(Callback&ltList&ltCat&gt&gt cat_list); //callback class member of retrofit library
+              
+	//make sure to get the retrofit callback imported, and not something else
+
+}
+	</code>
+</pre>
+<br/> <br/>Callback is a method in the Retrofit library. Make sure that when you include the Callback method, you are selecting the Retrofit method. There are a lot of java libraries with a method called Callback. 
+<br/> <br/>We are declaring a list object (which we also need to make sure to import) because the JSON data we will be getting from the API is a list, and then declaring that the list will be of type “Cat” which we defined previously. 
+<br/> <br/>I have called the List of Cat objects cat_list, because that is what makes sense to me, but you can call your variable anything you like. 
+
+<br/><br/>We also want to declare an option to POST to the API. 
+<pre class="language-java">
+	<code class="language-java"> 
+public interface CatAPI {
+
+
+    @GET("/cat")
+    public void getCats(Callback&ltList&ltCat&gt&gt cat_list);  
+    
+	@Headers("Accepts: application/json")
+    @POST("/cat")
+    public void createCat(@Body Cat newCat, Callback&ltCat&gt nc);
+
+}
+	</code>
+</pre>	
+<br/><br/>If we want to include any headers, we can do so using the @Headers tag. 
+<br/><br/>Like with @GET, we need to declare that the type of call we are making is a @POST. 
+<br/><br/>Because Retrofit handles all our details, we don’t need to tell the API exactly what data pairs we want to POST, we can use the @Body tag, and pass in one of our Cat objects. Retrofit will extract the information from the object and create the API call automatically. 
+<br/><br/>Again, we are going to need a Callback variable. This time we will use a single instance of Cat as the type (because we are posting a single Cat, not a list.) 
+<br/><br/>That’s it! That will set us up to GET and POST resources! 
+
+</div>
+
+
+
+
+
+
+
+
+
+<a name = "section5">
+<br/><br/><br/><br/>
+
+<div class = "sub-header">  The RestAdapter </div>
+	<div class = "text-section">
+	
+Now, we are going to tackle our MainActivity. 
+<br/> <br/>Note: This is going to be the most bare-bones main activity I can make, so that when you implement Retrofit into your own project, you will know the absolute minimum amount of code you will need to make your HTTP requests, without any extraneous fluff or confusion.  
+<br/> <br/>We are going to need two new methods inside our MainActivity, called something like 
+	<pre class="language-java">
+	<code class="language-java"> 
+private void getApiData() {
+}
+private void postApiData() {
+}
+	</code>
+	</pre>
+<br/> <br/>Inside both methods, we need a new object of type RestAdapter, which is part of the Retrofit library (add it with Alt+Enter) 
+	<pre class="language-java">
+	<code class="language-java"> 
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(ENDPOINT)
+                .build();
+        CatAPI catApi = restAdapter.create(CatAPI.class);
+	</code>
+	</pre>
+<br/> <br/>Builder() setEndpoint() and build() are all part of the RestAdapter class. We are telling Retrofit that we are Building() a RestAdapter with a specific ENDPOINT, and then that we want to build() the RestAdapter. Redundant? Yes. But syntactically necessary. 
+<br/> <br/>Then, we use our new RestAdapter to substantiate an instance of CatAPI, the interface. 
+<br/> <br/>This tells Retrofit where we defined:
+<ol type = "A">
+<li>the service we want to use (“/cats”), and </li>
+<li>B. where to find the instructions for how to make the API call. </li> 
+</ol>
+<br/> <br/>At this moment, you should have two methods that have exactly the same code. They will diverge soon. 
+<br/> <br/>Are you seeing an error because ENDPOINT has not been declared? Let's fix that. 
+<br/> <br/>ENDPOINT is the base URL of the API. 
+<br/> <br/>Head up to the top of the MainActivity class and declare : 
+	<pre class="language-java">
+	<code class="language-java"> 
+public static final String ENDPOINT = "http://stinghet-wk4.appspot.com";
+	</code>
+	</pre>
+
+	
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a name = "section6">
+<br/><br/><br/><br/>
+
+<div class = "sub-header"> The POST Method </div>
+	<div class = "text-section">
+	
+First, let’s fill in postApiData() 
+<br/> <br/>So far, it looks like this: 
+	<pre class="language-java">
+	<code class="language-java"> 
+
+    private void postApiData() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(ENDPOINT)
+                .build();
+
+        CatAPI catApi = restAdapter.create(CatAPI.class);
+    }
+	</code>
+	</pre>
+<br/> <br/>Now we need to create a Cat object to send to the API. In a fully functional program, you’re going to have a more elegant solution for this, but for now, let’s just manually enter one below the code we already have. 
+	<pre class="language-java">
+	<code class="language-java"> 
+
+        Cat myNewCat = new Cat(); 
+        myNewCat.setId("none");
+        myNewCat.setName("mimsy");
+        myNewCat.setColor("grey");
+        myNewCat.setNapSpot("your lap");
+</code>
+	</pre>
+<br/> <br/>Now here’s the tricky part, making the POST call.
+<br/> <br/>Just kidding! With Retrofit, it couldn’t be simpler! 
+<br/> <br/>Call the function createCat (from the interface) on our instance of catAPI. Give it the arguments myNewCat, that we just created, and a new Callback of type Cat. 
+<br/> <br/>Android Studio will automatically generate some method stubs for success and failure conditions. 
+	<pre class="language-java">
+	<code class="language-java"> 
+ 
+	catApi.createCat(myNewCat, new Callback&ltCat&gt() {
+            @Override
+            public void success(Cat cat, Response response) {
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+            }
+        });
+		</code>
+	</pre>
+<br/> <br/>I’m going to add a couple Toasts to the success and failure stubs, so that when we POST, we will be able to tell whether our POST was successful. 
+<br/> <br/>Here is the complete postApiData() method. It’s not a lot of code…    
+	<pre class="language-java">
+	<code class="language-java"> 
+
+    private void postApiData() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(ENDPOINT)
+                .build();
+
+        CatAPI catApi = restAdapter.create(CatAPI.class);
+
+        Cat myNewCat = new Cat();
+        myNewCat.setId("none");
+        myNewCat.setName("mimsy");
+        myNewCat.setColor("grey");
+        myNewCat.setNapSpot("your lap");
+
+        catApi.createCat(myNewCat, new Callback&ltCat&gt() {
+
+            @Override
+            public void success(Cat cat, Response response) {
+                Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(getApplicationContext(), "Error: " + error, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+	</code>
+	</pre>
+
+	
+</div>
+
+
+
+
+
+
+
+
+
+
+<a name = "section7">
+<br/><br/><br/><br/>
+
+<div class = "sub-header">  The GET Method </div>
+	<div class = "text-section">
+		
+Now, to fill in getApiData(). 
+<br/> <br/>So far, we have this method: 
+	<pre class="language-java">
+	<code class="language-java"> 
+    private void getApiData() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(ENDPOINT)
+                .build();
+
+        CatAPI catApi = restAdapter.create(CatAPI.class);
+	</code>
+	</pre>
+<br/> <br/>Similarly to the postApiData(), we are going to call the interface function on the CatApi, and get the auto-generated success and failure stubs, giving us a complete, if sparse, method. 
+ 	<pre class="language-java">
+	<code class="language-java"> 
+	  private void getApiData() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(ENDPOINT)
+                .build();
+
+        CatAPI catApi = restAdapter.create(CatAPI.class);
+
+        catApi.getCats(new Callback&ltList&ltCat&gt&gt() {
+
+            @Override
+            public void success(List&ltCat&gt cats, Response response) {
+            }
+				myCatsList = cats;
+            @Override
+            public void failure(RetrofitError error) {
+            }
+        });
+    }
+
+	</code>
+	</pre>
+<br/> <br/>Once we cal this method, the first argument in the success method will be a list of Cat objects retrieved from the API.  
+<br/><br/>Why don't we add a variable of &ltList&ltCat&gt&gt myCatsList to the top of ActivityMain, and then save the first argument as myCatsList. Then we can take myCatsList and do whatever we want with our data. 
+<br/> <br/>So, what will Retrofit do for us in between calling the method, and getting this success response? 
+<br/> <br/>A whole lot! 
+<br/> <br/>Retrofit will:
+<ol type = "A">
+<li> Handle the asynchronous processing (so that our app doesn’t hang while the data is being fetched) </li>
+<li> Retrieve the content from the API as a string </li>
+<li> Parse that data into JSON </li>
+<li> Convert that JSON into a POJO, specifically the Cat object that we defined. </li>
+<li> Deliver us a Java List full of dynamically generated strongly typed Java objects. </li>
+</ol>
+<br/> <br/>Thanks Retrofit! 
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<a name = "section8">
+<br/><br/><br/><br/>
+
+<div class = "sub-header">  SUBHEADER </div>
+	<div class = "text-section">
+	
+	
+If you are adding Retrofit to your own project and you already know what you are doing with the data, STOP RIGHT NOW. 
+<br/>You’re done! 
+<br/> <br/>Retrofit did all the hard work for us, and we have retrieved the data from the API, safely and efficiently.
+
+<br/> <br/>Now, go forth and use that list of objects. 
+
+<br/> <br/><br/>But… How do we know it worked? We can’t look inside the computer and see that myCatsList contains the data that Retrofit promised. 
+
+<br/> <br/>I’m going to demonstrate a quick and easy way to check that we are getting the data we are expecting and that we are generating no errors in the process. 
+
+<br/> <br/>Up until now we have had nothing to display in our app. In fact, if we run it, it still says “Hello World” 
+<br/> <br/>Time to change that! 
+
+<br/> <br/>Note: This isn’t a tutorial on Android Studio layouts, so I’m not going to go into detail about what’s going on here. If you would like to start designing layouts, try a tutorial  <a href = "http://www.techotopia.com/index.php/Designing_a_User_Interface_using_the_Android_Studio_Designer_Tool">like this one from techtopia.com</a>
+
+<br/> <br/>Replace the existing code in activity_main.xml with the following: 
+	<pre class="language-markup">
+	<code class="language-markup"> 
+&ltRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"&gt
+
+    &ltButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update List"
+        android:id="@+id/update_button"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" /&gt
+
+    &ltTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nothing Here Yet"
+        android:id="@+id/main_text"
+        android:layout_below="@+id/update_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true" /&gt
+
+
+&lt/RelativeLayout&gt
+</code>
+	</pre>
+	
+
+<br/> <br/>This gives us a button, and a place for some text. 
+<br/> <br/>Now we have a layout with a couple items. We need to populate those items with data. 
+
+<br/> <br/>In MainActivity.java, edit the MainActivity class, so that it implements View.OnClickListener 
+	<pre class="language-java">
+	<code class="language-java"> 
+public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+</code>
+	</pre>
+<br/> <br/>This will generate a few method stubs. We are going to want just one of them. Call the getApiData() or the postApiData() method from inside the onClick() method. 
+<br/> <br/>Note: Just comment out the one you aren’t currently using. This isn’t an app headed for production, we just want to make sure things are working.
+	<pre class="language-java">
+	<code class="language-java"> 
+public void onClick(View v){
+        getApiData();
+        //postApiData(); 
+    }
+</code>
+	</pre>
+<br/> <br/>(You can get rid of the rest of the method stubs now, if you want cleaner code.) 
+<br/> <br/>Now we know what to do “on-click” but what do we click? 
+
+Add this variable to the top of MainActivity
+	<pre class="language-java">
+	<code class="language-java"> 
+Button mainButton;
+</code>
+	</pre>
+And add these two lines to the OnCreate() method 
+	<pre class="language-java">
+	<code class="language-java"> 
+        mainButton = (Button) findViewById(R.id.update_button);
+        mainButton.setOnClickListener(this);
+</code>
+	</pre>
+
+<br/> <br/>Now our button works, and when we click it, it will call either getApiData() or postApiData(). 
+
+
+	
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a name = "section9">
+<br/><br/><br/><br/>
+
+<div class = "sub-header">  Sample POST to API </div>
+	<div class = "text-section">
+
+For our first trick, we’ll try a POST. 
+<br/> <br/>Take a look at <a href ="http://stinghet-wk4.appspot.com/cat"> http://stinghet-wk4.appspot.com/cat </a> in your browser.  
+<br/><br/><img src ="http://i.imgur.com/SqcHO8C.png">
+<br/> <br/>You’ll see some JSON data. It’s not very pretty. It’s really nice that Retrofit is able to convert it into a POJO so easily. 
+<br/> <br/>Now, launch the app that we’ve made either on an Android phone, or on the emulator included with Android Studio. You should see this screen: 
+<br/><br/><img src ="http://i.imgur.com/A6YzCIr.png">
+<br/> <br/>Press Update Data, and hopefully, we’ll see the Success message. 
+<br/><br/><img src ="http://i.imgur.com/mJzLUyv.png">
+<br/> <br/>Now, if we go back to <a href ="http://stinghet-wk4.appspot.com/cat"> http://stinghet-wk4.appspot.com/cat </a> we should see the new Cat included in the list of JSON objects. 
+<br/><br/><img src ="http://i.imgur.com/zm6rHrd.png">
+
+
+	
+</div>
+
+
+
+
+
+
+
+
+
+
+<a name = "section10">
+<br/><br/><br/><br/>
+
+<div class = "sub-header"> Sample GET Call </div>
+	<div class = "text-section">
+	
+
+Next let’s see if we can GET data and display it. 
+<br/> <br/> Add this code to the success() method inside the getApiData() method
+	<pre class="language-java">
+	<code class="language-java"> 
+		mainTextView = (TextView) findViewById(R.id.main_text);
+		mainTextView.setText("Cats List");
+		for (int i = 0; i < myCatsList.size(); i++) {
+			mainTextView.append("\n\nName: ");
+			mainTextView.append(myCatsList.get(i).getName());
+			mainTextView.append("\nColor: ");
+			mainTextView.append(myCatsList.get(i).getColor());
+			mainTextView.append("\nFavorite Napping Spot: ");
+			mainTextView.append(myCatsList.get(i).getNapSpot());
+		}
+		</code>
+	</pre>
+<br/> <br/> Change the OnClick() function, so that we are calling getApiData() instead of postApiData(), and let’s see what we get. 
+<br/><br/><img src ="http://i.imgur.com/TSxvAjU.png">
+<br/> <br/> It’s nothing fancy, but it looks like a list of cats! 
+
+	
+</div>
+
+
+
+
+
+
+
+<a name = "section11">
+<br/><br/><br/><br/>
+
+<div class = "sub-header"> Resources </div>
+	<div class = "text-section">
+	
+Thank you for reading my tutorial on Retrofit! I really hope that you enjoyed it and that this tutorial has given you a good idea of whether Retrofit is a good fit for your next project. 
+<br/> <br/> For more information on Retrofit, <a href ="http://square.github.io/retrofit/" >check out its official documentation </a>
+<br/> <br/> I used several resources to learn about Retrofit and to help me complete this tutorial. If you are looking for more information beyond the documentation, these are a great place to start. 
+<br/><br/>http://square.github.io/retrofit/
+<br/>http://stackoverflow.com/questions/26500036/using-retrofit-in-android
+<br/>http://codepen.io/asommer70/blog/retrofit-and-post
+<br/>http://stackoverflow.com/questions/19796235/post-with-android-retrofit
+<br/>http://blog.robinchutaux.com/blog/a-smart-way-to-use-retrofit/
+
+	
+</div>
+
+<div class="by-line"> 
+	<div id = "photo">
+	<img src ="http://i.imgur.com/VzVsEPA.png">
+	 </div>
+	 <div id = "personal-info">
+	 Tracy Stinghen
+	 <br/>For Oregon State University CS 496 Cloud and Mobile Development
+	 <br/> <br/>
+	 February 2015
+	 </div>
+ </div>
+ 
+</div>
