@@ -1,0 +1,94 @@
+@import url(http://fonts.googleapis.com/css?family=Josefin+Sans:400,300);
+
+#page-wrap { 
+  width: 1500px; 
+  margin: 15px auto; 
+  position: relative; 
+  background-color: #F0F0F0;
+}
+
+#sidebar { 
+  width: 200px; 
+  position: fixed; 
+  margin-left: 10px; 
+  line-height: 30px; 
+ 
+}
+
+body{
+margin:0px;
+background:#FFFFFF;
+font-family: 'Josefin Sans', sans-serif;;
+}
+
+
+.header-cont {
+width:100%;
+min-width: 900px;
+height: 50px; 
+background:#F0F0F0;
+position:fixed;
+top:0px;
+background-color: #F0F0F0;
+border:3px solid #F0F0F0;
+border-bottom-color: #000000; 
+border-left-width: 0px; 
+border-right-width: 0px; 
+padding: 10px; 
+font-weight: bold; 
+}
+.header {
+height:50px;
+background:#F0F0F0;
+border:3px solid #FF0066;
+width:900px;
+margin:0px auto;
+}
+.content {
+width: auto;
+max-width:940px; 
+background: #FFFFFF;
+height: 2000px;
+margin: 90px auto; 
+margin-left: 150px fixed; 
+padding-left: 220px; 
+padding-right: 20px; 
+}
+
+.big-header{
+font-size: 40px; 
+}
+
+.sub-header{
+border:3px solid #000000;
+border-left-width: 0px; 
+border-right-width: 0px; 
+font-size: 20px; 
+padding: 5px; 
+}
+.text-section{
+padding: 20px; 
+
+}
+.by-line{
+border:3px solid #000000;
+border-left-width: 0px; 
+border-right-width: 0px;  
+padding: 5px; 
+}
+
+#photo{
+float: left; 
+padding: 10px; 
+padding-right: 20px; 
+}
+
+#personal-info{
+float: center-left; 
+padding-left: 10px; 
+line-height: 30px; 
+}
+
+a:link {text-decoration: none; font-weight:bold; color: #000000}
+a:visited {text-decoration: none; font-weight:bold; color: #616161}
+a:active {text-decoration: underline; color: #F01188}
